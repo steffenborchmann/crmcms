@@ -25,12 +25,7 @@ class TranslatorUpload {
         $params = ['wc'];
         $params[] =  '-w';
         $params[] =  " \"$file.txt\" | awk '{print $1}'";
-        /* echo implode(' ',$params);
-        exit();*/
         exec( implode(' ',$params),$wcresult);
-        /** 
-         * eventuell .txt löschen
-         */
         if (count( $wcresult ) == 1) return intval($wcresult[0]);
         return false;
     }
@@ -77,15 +72,15 @@ class TranslatorUpload {
                 $hash['words']=$words;
                 if($count = self::pages($local_file_name)){
                     $hash['count']=$count;
-//                      echo 'update translations set source_pages = '.$hash['count'].' , source_words = '.$hash['words'].' where translation='.$hash['translation'];
-//                      exit();
                     $db->direct('update translations set source_pages = {count}, source_words = {words} where id={translation}',$hash);
                 }
 
                 if (file_exists($local_file_name)){ unlink($local_file_name); }
+                if (file_exists($local_file_name.'txt')){ unlink($local_file_name.'txt'); }
                 $crm->set('type','upload_success');
             }
         }
 
     }
 }
+
