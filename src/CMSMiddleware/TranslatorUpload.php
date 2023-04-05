@@ -19,11 +19,14 @@ class TranslatorUpload {
         if (count( $gsresult ) == 1) return intval($gsresult[0]);
         return false;
     }
+
     public static function words($file):mixed{
         exec('pdftotext '.$file , $nix, $state);
         $params = ['wc'];
         $params[] =  '-w';
-        $params[] =  " \"($file).txt\" | awk '{print $1}'";
+        $params[] =  " \"$file.txt\" | awk '{print $1}'";
+        /* echo implode(' ',$params);
+        exit();*/
         exec( implode(' ',$params),$wcresult);
         /** 
          * eventuell .txt löschen
@@ -31,6 +34,7 @@ class TranslatorUpload {
         if (count( $wcresult ) == 1) return intval($wcresult[0]);
         return false;
     }
+
     public static function db() { return App::get('session')->getDB(); }
     public static function run(&$request,&$result){
         if (
@@ -73,7 +77,9 @@ class TranslatorUpload {
                 $hash['words']=$words;
                 if($count = self::pages($local_file_name)){
                     $hash['count']=$count;
-                    $db->direct('update translations set source_pages = {count}, source_words = {words} where translation={translation}',$hash);
+//                      echo 'update translations set source_pages = '.$hash['count'].' , source_words = '.$hash['words'].' where translation='.$hash['translation'];
+//                      exit();
+                    $db->direct('update translations set source_pages = {count}, source_words = {words} where id={translation}',$hash);
                 }
 
                 if (file_exists($local_file_name)){ unlink($local_file_name); }
