@@ -58,9 +58,10 @@ class TranslatorUpload {
                     'source_language'       =>  $_REQUEST['source_lang'],
                     'destination_language'  =>  $_REQUEST['destination_lang'],
                     'kundennummer'          =>  $crm->get('account')->get('kundennummer'),
-                    'kostenstelle'          =>  $crm->get('account')->get('kostenstelle')
+                    'kostenstelle'          =>  $crm->get('account')->get('kostenstelle'),
+                    'desired_date'  =>  $_REQUEST['finished-date'],
                 ];
-                $db->direct('insert into translations (id,project,source_language,destination_language,created) values ({translation},{project},{source_language},{destination_language},now())',$hash);
+                $db->direct('insert into translations (id,project,source_language,destination_language,created,desired_date) values ({translation},{project},{source_language},{destination_language},now(),{desired_date})',$hash);
                 $db->direct('insert into translations_kunden (translation,kundennummer,kostenstelle) values ({translation},{kundennummer},{kostenstelle} )',$hash);
                 
                 $local_file_name = App::get('tempPath').'/.ht_'.(Uuid::uuid4())->toString();
