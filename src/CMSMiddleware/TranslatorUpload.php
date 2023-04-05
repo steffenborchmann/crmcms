@@ -19,7 +19,18 @@ class TranslatorUpload {
         if (count( $gsresult ) == 1) return intval($gsresult[0]);
         return false;
     }
-
+    public static function words($file):mixed{
+        exec('pdftotext '.$file , $nix, $state);
+        $params = ['wc'];
+        $params[] =  '-w';
+        $params[] =  " \"($file).txt\" | awk '{print $1}'";
+        exec( implode(' ',$params),$wcresult);
+        /** 
+         * eventuell .txt löschen
+         */
+        if (count( $wcresult ) == 1) return intval($wcresult[0]);
+        return false;
+    }
     public static function db() { return App::get('session')->getDB(); }
     public static function run(&$request,&$result){
         if (
@@ -58,10 +69,13 @@ class TranslatorUpload {
                     'fieldName'=>'translations__document',
                     'translations__id'=>$hash['translation']
                 ],$local_file_name );
+                $words = self::words($local_file_name);
+                $hash['words']=$words;
                 if($count = self::pages($local_file_name)){
                     $hash['count']=$count;
-                    $db->direct('update translations set source_pages = {count} where translation={translation}',$hash);
+                    $db->direct('update translations set source_pages = {count}, source_words = {words} where translation={translation}',$hash);
                 }
+
                 if (file_exists($local_file_name)){ unlink($local_file_name); }
                 $crm->set('type','upload_success');
             }
