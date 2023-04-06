@@ -59,7 +59,7 @@ class TranslatorUpload {
                     'destination_language'  =>  $_REQUEST['destination_lang'],
                     'kundennummer'          =>  $crm->get('account')->get('kundennummer'),
                     'kostenstelle'          =>  $crm->get('account')->get('kostenstelle'),
-                    'desired_date'  =>  $_REQUEST['finished-date'],
+                    'desired_date'          =>  $_REQUEST['finished-date']
                 ];
                 $db->direct('insert into translations (id,project,source_language,destination_language,created,desired_date) values ({translation},{project},{source_language},{destination_language},now(),{desired_date})',$hash);
                 $db->direct('insert into translations_kunden (translation,kundennummer,kostenstelle) values ({translation},{kundennummer},{kostenstelle} )',$hash);
